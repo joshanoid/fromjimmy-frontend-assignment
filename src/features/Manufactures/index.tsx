@@ -1,7 +1,11 @@
 import * as React from 'react'
 import {
+    Alert,
     Box,
     Button,
+    CircularProgress,
+    Paper,
+    Snackbar,
     Table,
     TableBody,
     TableCell,
@@ -9,12 +13,12 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 import { fetchManufacturers } from '../../utils/api'
+import { ManufacturersResponse } from '../../utils/types'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -30,23 +34,57 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
     },
 }))
 
 export const Manufactures = () => {
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    const [errorSnackbarOpen, setErrorSnackbarOpen] = React.useState(true)
+    const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery<
+        ManufacturersResponse,
+        Error
+    >({
         queryKey: ['manufacturers'],
         queryFn: fetchManufacturers,
         getNextPageParam: (lastPage) => lastPage.nextPage,
     })
+    const getLoadButtonText = () => {
+        if (isFetchingNextPage) {
+            return 'Loading more manufacturers...'
+        }
+
+        if (hasNextPage) {
+            return 'Load more'
+        }
+
+        return 'No more manufacturers to load'
+    }
+
+    React.useEffect(() => {
+        setErrorSnackbarOpen(status === 'error')
+    }, [status])
 
     return (
         <Box padding={5}>
+            {status === 'loading' && <CircularProgress style={{ position: 'fixed', right: 10, top: 10 }} />}
+            <Snackbar
+                open={errorSnackbarOpen}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                autoHideDuration={6000}
+                onClose={() => setErrorSnackbarOpen(false)}
+            >
+                <Alert
+                    onClose={() => setErrorSnackbarOpen(false)}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {error?.message}
+                </Alert>
+            </Snackbar>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <Table sx={{ minWidth: 700 }}>
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>Id</StyledTableCell>
@@ -57,7 +95,7 @@ export const Manufactures = () => {
                     </TableHead>
                     <TableBody>
                         {data?.pages.map((page) => (
-                            <React.Fragment key={page.nextPage - 1}>
+                            <React.Fragment key={(page.nextPage ?? 1) - 1}>
                                 {page.Results.map((row) => (
                                     <StyledTableRow key={row.Mfr_ID}>
                                         <StyledTableCell component="th" scope="row">
@@ -74,7 +112,7 @@ export const Manufactures = () => {
                 </Table>
             </TableContainer>
             <Button onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
-                {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+                {getLoadButtonText()}
             </Button>
         </Box>
     )
