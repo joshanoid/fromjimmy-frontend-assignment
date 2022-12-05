@@ -16,5 +16,5 @@ export type ManufacturersResponse = {
     Message: string
     SearchCriteria: null
     Results: ReadonlyArray<Manufacturer>
-    nextPage: number
+    nextPage?: number
 }
