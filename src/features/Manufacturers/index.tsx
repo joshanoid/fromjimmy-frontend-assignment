@@ -16,6 +16,7 @@ import {
 } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 
 import { fetchManufacturers } from '../../utils/api'
 import { ManufacturersResponse } from '../../utils/types'
@@ -39,7 +40,8 @@ const StyledTableRow = styled(TableRow)(() => ({
     },
 }))
 
-export const Manufactures = () => {
+export const Manufacturers = () => {
+    const navigate = useNavigate()
     const [errorSnackbarOpen, setErrorSnackbarOpen] = React.useState(true)
     const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery<
         ManufacturersResponse,
@@ -104,7 +106,11 @@ export const Manufactures = () => {
                                         <StyledTableCell align="right">{row.Mfr_Name}</StyledTableCell>
                                         <StyledTableCell align="right">{row.Country}</StyledTableCell>
                                         <StyledTableCell align="right">
-                                            <Button onClick={() => {}} variant="contained" size="small">
+                                            <Button
+                                                onClick={() => navigate(`/details/${row.Mfr_ID}/${row.Mfr_Name}`)}
+                                                variant="contained"
+                                                size="small"
+                                            >
                                                 Details
                                             </Button>
                                         </StyledTableCell>
