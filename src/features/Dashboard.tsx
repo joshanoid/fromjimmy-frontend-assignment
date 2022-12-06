@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { Box } from '@mui/material'
+import { Stack } from '@mui/material'
 
 import logo from './logo-jimmy.svg'
 import { Manufactures } from './Manufactures'
 
 export const Dashboard = () => (
-    <Box>
-        <img src={logo} alt="Jimmy Technologies logo" />
+    <Stack spacing={2} justifyContent="center" alignItems="center" paddingTop={2}>
+        <img width={500} src={logo} alt="Jimmy Technologies logo" />
         <Manufactures />
-    </Box>
+    </Stack>
 )

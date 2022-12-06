@@ -20,19 +20,19 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchManufacturers } from '../../utils/api'
 import { ManufacturersResponse } from '../../utils/types'
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
+        backgroundColor: '#6A24FF',
+        color: '#fcfcff',
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
     },
 }))
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(() => ({
     '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
+        backgroundColor: '#e5f9ff',
     },
     '&:last-child td, &:last-child th': {
         border: 0,
@@ -84,7 +84,7 @@ export const Manufactures = () => {
                 </Alert>
             </Snackbar>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700 }}>
+                <Table sx={{ minWidth: 500 }}>
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>Id</StyledTableCell>
@@ -103,7 +103,11 @@ export const Manufactures = () => {
                                         </StyledTableCell>
                                         <StyledTableCell align="right">{row.Mfr_Name}</StyledTableCell>
                                         <StyledTableCell align="right">{row.Country}</StyledTableCell>
-                                        <StyledTableCell align="right">Button</StyledTableCell>
+                                        <StyledTableCell align="right">
+                                            <Button onClick={() => {}} variant="contained" size="small">
+                                                Details
+                                            </Button>
+                                        </StyledTableCell>
                                     </StyledTableRow>
                                 ))}
                             </React.Fragment>
@@ -111,7 +115,12 @@ export const Manufactures = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
+            <Button
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isFetchingNextPage}
+                variant="contained"
+                fullWidth
+            >
                 {getLoadButtonText()}
             </Button>
         </Box>
